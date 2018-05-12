@@ -10,4 +10,8 @@ var CreateTodo = (req, res) => {
     });
 }
 
-module.exports = {CreateTodo};
+var GetTodo = (req, res) => {
+    res.send(req.parameters.id);
+};
+
+module.exports = {CreateTodo, GetTodo};

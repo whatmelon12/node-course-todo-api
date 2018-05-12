@@ -1,5 +1,6 @@
 module.exports = function(app){
     var controller = require('./../controller/todoController');
     app.route('/todos')
-        .post(controller.CreateTodo);
+        .post(controller.CreateTodo)
+        .get('/:id', controller.GetTodo);
 };
