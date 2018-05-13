@@ -11,7 +11,11 @@ var CreateTodo = (req, res) => {
 }
 
 var GetTodo = (req, res) => {
-    res.send(req.parameters.id);
+   Todo.find().then((doc) => {
+       res.send(doc);
+   }, (e) => {
+       res.status(400).send(e);
+   })
 };
 
 module.exports = {CreateTodo, GetTodo};
