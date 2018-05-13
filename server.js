@@ -1,13 +1,15 @@
-var express = require('express');
-var bodyParser = require('body-parser');
+const express = require('express');
+const bodyParser = require('body-parser');
 
-var todoRoutes = require('./routes/todoRoutes');
+const todoRoutes = require('./routes/todoRoutes');
+
+const port = process.env.port || 3000;
 
 var app = express();
 app.use(bodyParser.json());
 
 todoRoutes(app);
 
-app.listen(3000, () => {
-    console.log('Started on port 3000');
+app.listen(port, () => {
+    console.log(`Started on port ${port}`);
 })
