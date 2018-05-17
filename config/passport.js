@@ -29,9 +29,10 @@ var localLogin = new LocalStrategy(localOptions, (email, password, done) => {
     });
 });
 
+//This object is as it is. Defined by passport for jwtOptions
 var jwtOptions = {
-    jwtFromRequest: ExtractJwt.fromAuthHeader(),
-    secretKey: config.secret
+    jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+    secretOrKey: config.secret
 };
 
 var jwtLogin = new JwtStrategy(jwtOptions, (payload, done) => {

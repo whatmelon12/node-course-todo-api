@@ -1,6 +1,9 @@
 const express = require('express');
 const passport = require('passport');
 
+//Modules when required executed their code. Thats why passport gets configured with just requiring
+//the custom config.
+const passportConfig = require('./config/passport');
 const todoController = require('./controller/todoController');
 const authController = require('./controller/authController');
 
@@ -16,13 +19,16 @@ module.exports = function(app){
     apiRoute.use('/auth', authRoute);
     authRoute.post('/register', authController.register);
     authRoute.post('login', requireLogin, authController.login);
+    authRoute.get('/test', requireAuth, (req, res) => {
+        res.send({error: 'Success'});
+    });
 
-    apiRoute.use('/todo', todoRoute);
-    todoRoute.post('/', todoController.CreateTodo);
-    todoRoute.get('/', todoController.GetTodos);
-    todoRoute.get('/:id', todoController.GetTodoById);
-    todoRoute.patch('/:id', todoController.UpdateTodo);
-    todoRoute.delete('/:id', todoController.DeleteTodo);
+    apiRoute.use('/todo', requireAuth, todoRoute);
+    todoRoute.post('/', requireAuth, todoController.CreateTodo);
+    todoRoute.get('/', requireAuth, todoController.GetTodos);
+    todoRoute.get('/:id', requireAuth, todoController.GetTodoById);
+    todoRoute.patch('/:id', requireAuth, todoController.UpdateTodo);
+    todoRoute.delete('/:id', requireAuth, todoController.DeleteTodo);
 
     app.use('/api', apiRoute);
 }
