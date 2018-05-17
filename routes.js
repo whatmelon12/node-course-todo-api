@@ -18,7 +18,7 @@ module.exports = function(app){
 
     apiRoute.use('/auth', authRoute);
     authRoute.post('/register', authController.register);
-    authRoute.post('login', requireLogin, authController.login);
+    authRoute.post('/login', requireLogin, authController.login);
     authRoute.get('/test', requireAuth, (req, res) => {
         res.send({error: 'Success'});
     });

@@ -5,6 +5,9 @@ const {mongoose} = require('./../db/mongoose');
 const {Todo} = require('./../model/todo');
 
 var CreateTodo = (req, res) => {
+    var user = req.user;
+    var body = req.body;
+    body.user_id = user._id;
     var todo = new Todo(req.body);
     todo.save().then((todo) => {
         res.send({todo});
@@ -14,7 +17,7 @@ var CreateTodo = (req, res) => {
 }
 
 var GetTodos = (req, res) => {
-    Todo.find().then((todo) => {
+    Todo.find({user_id: req.user._id}).then((todo) => {
         res.send({todo});
     }).catch((e) => {
         res.status(400).send(e);
@@ -27,7 +30,10 @@ var GetTodoById = (req, res) => {
         return res.status(404).send();
     }
 
-    Todo.findById(req.params.id).then((todo) => {
+    Todo.findOne({
+        _id: id,
+        user_id: req.user._id
+    }).then((todo) => {
         if(!todo){
             return res.status(404).send();
         }
@@ -53,7 +59,10 @@ var UpdateTodo = (req, res) =>{
         body.completedAt = null;
     }
 
-    Todo.findByIdAndUpdate(id, {$set: body}, {new: true}).then((todo) => {
+    Todo.findOneAndUpdate({
+        _id: id,
+        user_id: req.user._id
+    }, {$set: body}, {new: true}).then((todo) => {
         if(!todo){
             return res.status(404).send();
         }
@@ -69,7 +78,10 @@ var DeleteTodo = (req, res) => {
         return res.status(404).send();
     }
 
-    Todo.findByIdAndRemove(req.params.id).then((todo) => {
+    Todo.findOneAndRemove({
+        _id: id,
+        user_id: req.user._id
+    }).then((todo) => {
         if(!todo){
             return res.status(404).send();
         }
