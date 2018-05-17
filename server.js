@@ -1,16 +1,16 @@
 const express = require('express');
 const bodyParser = require('body-parser');
+const cors = require('cors');
 
-const todoRoutes = require('./routes/todoRoutes');
-const userRoutes = require('./routes/userRoutes');
+const apiRouter = require('./routes');
 
 const port = process.env.port || 3000;
 
 var app = express();
 app.use(bodyParser.json());
+app.use(cors);
 
-todoRoutes(app);
-userRoutes(app);
+apiRouter(app);
 
 app.listen(port, () => {
     console.log(`Started on port ${port}`);

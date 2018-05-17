@@ -1,9 +1,10 @@
 const mongoose = require('mongoose');
 const validator = require('validator');
 const jwt = require('jsonwebtoken');
+const bcrypt = require('bcrypt');
 const _ = require('lodash');
 
-var UserSchema = mongoose.Schema( {
+var UserSchema = mongoose.Schema({
     email:{
         type: String,
         require: true,
@@ -20,35 +21,31 @@ var UserSchema = mongoose.Schema( {
         require: true,
         minlength: 6
     },
-    tokens:[{
-        access: {
-            type: String,
-            require: true
-        },
-        token:{
-            type: String,
-            require: true
-        }
-    }]
+    role: String    
+},{
+    timestamps: true
 });
 
-UserSchema.methods.toJSON = function(){
+UserSchema.pre('save', function(next){
     var user = this;
-    var userObject = user.toObject();
+    var SALT = 10;
 
-    return _.pick(userObject, ['_id', 'email']);
-};
+    if(!user.isModified('password')){
+        return next();
+    }
 
-UserSchema.methods.generateAuthToken = function(){
-    var user = this;
-    var access = 'auth';
-    var token = jwt.sign({_id:user._id.toHexString(), access}, 'revali507').toString();
-
-    user.tokens.push({access, token});
-    user.save().then(() => {
-        return token;
+    //Hashes password with a little salt.
+    bcrypt.hash(user.password, SALT).then((hash) => {
+        user.password = hash;
+        next();
+    }).catch((e) => {
+        next(e);
     });
-};
+})
+
+UserSchema.methods.comparePassword = function(passwordAttempt, next){
+    return bcrypt.compare(passwordAttempt, this.password);
+}
 
 var User = mongoose.model('User', UserSchema);
 
