@@ -31,7 +31,7 @@ var register = (req, res, next) => {
         newUser.save().then((user) => {
             var userInfo = minimizeUser(user);
             res.status(201).send({
-                token: 'bearer ' + generateToken(userInfo),
+                token: generateToken(userInfo),
                 user: userInfo 
             });
         }).catch((e) => {
@@ -43,7 +43,7 @@ var register = (req, res, next) => {
 var login = (req, res) => {
     var userInfo = minimizeUser(req.user);
     res.status(201).send({
-        token: 'bearer ' + generateToken(userInfo),
+        token: generateToken(userInfo),
         user: userInfo 
     });
 }
